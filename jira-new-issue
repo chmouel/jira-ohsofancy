@@ -87,7 +87,7 @@ class JIC(object):
     # Not using the whole list if issue_type and only a static list cause a lot
     # of irrelevant stuff in there,
     def get_issuetype(self):
-        return iterfzf.iterfzf(RESTRICT_ISSUE_TYPE, prompt="Issue Type> ")
+        return iterfzf.iterfzf(RESTRICT_ISSUE_TYPE, prompt="🐞 Issue Type> ")
 
     def _get(
             self,
@@ -105,33 +105,33 @@ class JIC(object):
 
     def get_project(self):
         cnx = self.get_cnx()
-        return self._get(cnx.projects, prompt="Project")
+        return self._get(cnx.projects, prompt="📚 Project")
 
     def get_priorities(self):
         cnx = self.get_cnx()
-        return self._get(cnx.priorities, prompt="Priority")
+        return self._get(cnx.priorities, prompt="💁‍♂️ Priority")
 
     def get_component(self, project):
         cnx = self.get_cnx()
-        return self._get(cnx.project_components, project, prompt="Component")
+        return self._get(cnx.project_components, project, prompt="👜 Component")
 
     def get_versions(self, project):
         cnx = self.get_cnx()
-        return self._get(cnx.project_versions, project, prompt="Version")
+        return self._get(cnx.project_versions, project, prompt="💼 Version")
 
     def issue(self):
         self.set_config()
 
         cnx = self.get_cnx()
-        summary = self.inputstring("Enter a title for your issue: ")
+        summary = self.inputstring("✍🏼  Enter a title for your issue: ")
         project = self.get_project()
+        version = self.get_versions(project)
         issuetype = self.get_issuetype()
         component = self.get_component(project)
-        version = self.get_versions(project)
         priority = self.get_priorities()
 
-        assign = self.inputstring("Enter an assignee ('me' for yourself): ")
-        print("Launching your editor to edit the description of the issue.")
+        assign = self.inputstring("🥺 Enter an assignee ('me' for yourself): ")
+        print("🛣Launching your editor to edit the description of the issue.")
         description = self.edit()
 
         if assign == 'me':
