@@ -14,7 +14,7 @@ This will use fzf for quick filtering of fields and spin up your `$EDITOR` to ty
 This will the binary `jira-new-issue` into your PATH and the depedencies that goes with it.
 
 ```shell
-python3 -m pip install git+https://github.com/chmouel/jira-ohsofancy
+python3 install jira-ohsofancy
 ```
 
 You can install the [zsh completion file](./misc/jira-new-issue.completion.zsh)
