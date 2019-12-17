@@ -12,22 +12,5 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-from distutils.core import setup
 
-setup(
-    name='jira-ohsofancy',
-    version='0.1',
-    description='Jira getting a facelift via the command line',
-    author='Chmouel Boudjnah',
-    author_email='chmouel@chmouel.com',
-    url='https://github.com/chmouel/jira-ohsofancy',
-    install_requires=['iterfzf>=0.4.0', 'jira>=2.0.0'],
-    packages=["jiraohsofancy"],
-    classifiers=[
-        'License :: OSI Approved :: Python Software Foundation License'
-    ],
-    entry_points={
-        'console_scripts': [
-            'jira-new-issue = jiraohsofancy.cli:newissue',
-        ],
-    })
+RESTRICT_ISSUE_TYPE = ['Bug', 'Task', 'Epic', 'Story']

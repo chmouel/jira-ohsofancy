@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Author: Chmouel Boudjnah <chmouel@chmouel.com>
 #
@@ -13,22 +12,17 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-import argparse
 import configparser
 import os
-import readline
+import pprint
 import subprocess
-import sys
 import tempfile
 import webbrowser
-from pprint import pprint as p
 
 import iterfzf
 import jira
 
-readline.parse_and_bind("tab: complete")
-
-RESTRICT_ISSUE_TYPE = ['Bug', 'Task', 'Epic', 'Story']
+from jiraohsofancy import config
 
 
 class JIC(object):
@@ -87,7 +81,8 @@ class JIC(object):
     # Not using the whole list if issue_type and only a static list cause a lot
     # of irrelevant stuff in there,
     def get_issuetype(self):
-        return iterfzf.iterfzf(RESTRICT_ISSUE_TYPE, prompt="🐞 Issue Type> ")
+        return iterfzf.iterfzf(
+            config.RESTRICT_ISSUE_TYPE, prompt="🐞 Issue Type> ")
 
     def _get(
             self,
@@ -201,86 +196,10 @@ class JIC(object):
         }
 
         if self.args.test:
-            p(fields)
+            pprint.pprint(fields)
         else:
             created = cnx.create_issue(fields=fields)
             permalink = created.permalink()
             print(permalink)
             if self.args.open:
                 webbrowser.open(permalink)
-
-
-def launch(args=None):
-    parser = argparse.ArgumentParser(description='Create a JIRA issue.')
-    parser.add_argument(
-        "--editor", type=str, help="Editor to use default to $EDITOR or vim.")
-
-    parser.add_argument(
-        "--complete", type=str, help="Used by shell completion.")
-
-    parser.add_argument(
-        "--test", default=False, action='store_true', help="Test mode")
-
-    parser.add_argument(
-        "--open",
-        default=os.environ.get("JIRA_OPEN") and True or False,
-        action='store_true',
-        help=
-        "Wether to open automatically the web browser after creating the issue"
-    )
-
-    parser.add_argument(
-        "--summary", type=str, help="Specify a summary for the issue.")
-
-    parser.add_argument(
-        "--project",
-        type=str,
-        default=os.environ.get("JIRA_PROJECT"),
-        help="Specify a project.")
-
-    parser.add_argument(
-        "--version",
-        type=str,
-        default=os.environ.get("JIRA_VERSION"),
-        help="Specify a version.")
-
-    parser.add_argument(
-        "--issuetype",
-        type=str,
-        default=os.environ.get("JIRA_ISSUETYPE"),
-        help="Specify an issue type.")
-
-    parser.add_argument(
-        "--component",
-        default=os.environ.get("JIRA_COMPONENT"),
-        type=str,
-        help="Specify a component.")
-
-    parser.add_argument(
-        "--priority",
-        default=os.environ.get("JIRA_PRIORITY"),
-        type=str,
-        help="Specify a priority.")
-
-    parser.add_argument(
-        "--assign",
-        default=os.environ.get("JIRA_ASSIGN"),
-        type=str,
-        help="Assign to someone (use 'me' for yourself).")
-
-    parser.add_argument(
-        "--description-file",
-        type=str,
-        help="Use this file as the description content of the issue")
-
-    args = parser.parse_args(args or sys.argv[1:])
-    m = JIC(args)
-    m.set_config()
-    if args.complete:
-        m.complete()
-    else:
-        m.issue()
-
-
-if __name__ == '__main__':
-    launch()
