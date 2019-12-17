@@ -35,13 +35,14 @@ username=joe
 password=jane
 ```
 
+Most command can be overriden by env flags for example for example `JIRA_PROJECT` will be
+used unless specified with the `--project` flag.
+
+
 # Usage
 
 Unless you override it with a flag (see `--help` for details) it will ask you
 interactively with `fzf` the needed thing to create an issue.
-
-You can set default with environment variable for example `JIRA_PROJECT` will be
-used unless specified with the `--project` flag.
 
 If you specify the `--description-file` it will use the file content for the description.
 
