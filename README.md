@@ -18,7 +18,11 @@ python3 -m pip install -r requirements.txt git+https://github.com/chmouel/jira-o
 ```
 
 You can install the [zsh completion file](./misc/jira-new-issue.completion.zsh)
-to your path as documented on this [stackoverflow answer](https://unix.stackexchange.com/a/33898) to get a zsh completion.
+to your path as documented on this [stackoverflow
+answer](https://unix.stackexchange.com/a/33898) to get the zsh completion. The
+completion is pretty fancy too, it would complete on for example the components
+of the specified project. (make sure you specify `--project` flag or
+`JIRA_PROJECT` env so it knows where to go)
 
 # Configuration
 
@@ -34,10 +38,12 @@ password=jane
 # Usage
 
 Unless you override it with a flag (see `--help` for details) it will ask you
-interactively with `fzf` what's needed to create an issue.
+interactively with `fzf` the needed thing to create an issue.
 
 You can set default with environment variable for example `JIRA_PROJECT` will be
 used unless specified with the `--project` flag.
+
+If you specify the `--description-file` it will use the file content for the description.
 
 # Demo
 
@@ -45,7 +51,7 @@ used unless specified with the `--project` flag.
 
 # Authors
 
-Chmouel Boudjnah <chmouel@chmouel.com>
+Chmouel Boudjnah -- chmouel@chmouel.com
 
 # License
 
