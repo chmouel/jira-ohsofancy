@@ -36,20 +36,21 @@ class JIC(object):
         password = os.environ.get("JIRA_PASSWORD")
         server = os.environ.get("JIRA_SERVER")
         if username and password and server:
-            return {
+            self.config = {
                 'username': username,
                 'password': password,
                 'server': server,
             }
-        configfile = os.path.expanduser("~/.config/jira.ini")
+            return self.config
+        configfile = os.path.expanduser(config.CONFIGFILE)
         if not os.path.exists(configfile):
             raise Exception("No configuration file has been set")
-        config = configparser.ConfigParser()
-        config.read(configfile)
+        cfg = configparser.ConfigParser()
+        cfg.read(configfile)
         self.config = {
-            "server": config.get('jira', 'server'),
-            "username": config.get('jira', 'username'),
-            "password": config.get('jira', 'password')
+            "server": cfg.get('jira', 'server'),
+            "username": cfg.get('jira', 'username'),
+            "password": cfg.get('jira', 'password')
         }
 
     def inputstring(self, prompt):

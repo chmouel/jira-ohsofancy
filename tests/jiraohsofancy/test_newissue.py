@@ -12,11 +12,13 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+import os
+import tempfile
 from unittest.mock import MagicMock
 
 import iterfzf
-
 from jiraohsofancy import jiraohsofancy
+from jiraohsofancy import config
 
 
 class FakeObject(object):
@@ -61,6 +63,35 @@ class FakeJIRA(object):
 
     def project_versions(self, project):
         return self._versions
+
+
+def test_get_config(monkeypatch):
+    [
+        monkeypatch.delenv(x, raising=False)
+        for x in ["JIRA_USERNAME", "JIRA_PASSWORD", "JIRA_SERVER"]
+    ]
+
+    # TODO(chmou): fake the os.environ
+    with monkeypatch.context() as m:
+        m.setenv("JIRA_USERNAME", "foo")
+        m.setenv("JIRA_PASSWORD", "bar")
+        m.setenv("JIRA_SERVER", "https://blah")
+        j = jiraohsofancy.JIC(None)
+        ret = j.set_config()
+        assert (ret['username'] == "foo")
+
+    tmpfile = tempfile.NamedTemporaryFile(delete=False)
+    tmpfile.write(b"""[jira]\n
+server=http://hahaha\n
+username=hello\n
+password=moto\n
+""")
+    tmpfile.close()
+
+    monkeypatch.setattr(config, "CONFIGFILE", tmpfile.name)
+    j.set_config()
+    assert (j.config["username"] == "hello")
+    os.remove(tmpfile.name)
 
 
 def test_get_objects():
