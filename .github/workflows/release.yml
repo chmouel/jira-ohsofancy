@@ -27,3 +27,9 @@ jobs:
             - Second Change
           draft: false
           prerelease: false
+      - name: Deploy on PyPI
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@master
+        with: 
+          username: __token__
+          password: ${{ secrets.PYPI_APIKEY }}
