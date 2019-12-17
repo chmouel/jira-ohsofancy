@@ -121,18 +121,21 @@ class JIC(object):
         cnx = self.get_cnx()
         return self._get(cnx.project_versions, project, prompt="💼 Version")
 
-    def _get_completion(self, func, *args):
-        objs = func(*args)
-        return " ".sorted([ob for ob in objs])
-
     def complete(self):
         cnx = self.get_cnx()
         ctype = self.args.complete
         comp = ""
         if ctype == "component":
-            comp = " ".join(
-                [ob.name for ob in cnx.project_components(self.args.project)])
-        if ctype == "project":
+            comp = " ".join([
+                ob.name.strip()
+                for ob in cnx.project_components(self.args.project)
+            ])
+        elif ctype == "version":
+            comp = " ".join([
+                ob.name.strip()
+                for ob in cnx.project_versions(self.args.project)
+            ])
+        elif ctype == "project":
             comp = " ".join([ob.key for ob in cnx.projects()])
 
         print(comp)

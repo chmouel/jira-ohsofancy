@@ -18,7 +18,7 @@ local args=(
     '--summary=[Specify a summary for the issue]' \
     '--editor=[Editor to use default to $EDITOR or vim]:editor path:_path_files -/' \
     '--project=[Specify a project]:get project:->project' \
-    '--version=[Specify a version]' \
+    '--version=[Specify a version]:complete version:->version' \
     '--issuetype=[Specify an issuetype]:Issue type:(Bug Task Epic Story)' \
     '--component=[Specify a Component]:Specify a component:->component' \
     '--priority=[Specify a priority]:Set priority:(Low Blocker Critical High Optional Medium Minor Urgent)' \
@@ -29,12 +29,11 @@ local args=(
 _arguments -S $args && ret=0
 
 case $state in
-    component|project)
+    component|project|version)
         local extra
         local cacheid=jira-${state}
 
         if [[ ${state} != 'project' ]];then
-
             for (( i = 1; i <= $#words - 1; i++ )); do
                 if [[ $words[$i] == --project=*  ]]; then
                     extra=$words[$i]
