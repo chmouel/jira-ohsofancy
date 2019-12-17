@@ -17,7 +17,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -27,9 +27,11 @@ jobs:
             - Second Change
           draft: false
           prerelease: false
+      - name: Build a binary wheel and a source tarball
+        run: |
+          python setup.py sdist
       - name: Deploy on PyPI
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@master
-        with: 
+        with:
           username: __token__
           password: ${{ secrets.PYPI_APIKEY }}
