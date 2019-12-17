@@ -14,3 +14,5 @@
 # under the License.
 
 RESTRICT_ISSUE_TYPE = ['Bug', 'Task', 'Epic', 'Story']
+
+CONFIGFILE = "~/.config/jira.ini"
