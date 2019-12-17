@@ -18,11 +18,14 @@ setup(
     name='jira-ohsofancy',
     version='0.1',
     description='Jira getting a facelift via the command line',
+    long_description_content_type='text/markdown',
+    long_description=open("README.md").read(),
     author='Chmouel Boudjnah',
     author_email='chmouel@chmouel.com',
     url='https://github.com/chmouel/jira-ohsofancy',
     install_requires=['iterfzf>=0.4.0', 'jira>=2.0.0'],
     packages=["jiraohsofancy"],
+    license="Apache 2.0",
     classifiers=[
         'License :: OSI Approved :: Python Software Foundation License'
     ],
