@@ -38,9 +38,8 @@ def newissue(args=None):
         "--open",
         default=os.environ.get("JIRA_OPEN") and True or False,
         action='store_true',
-        help=
-        "Wether to open automatically the web browser after creating the issue"
-    )
+        help="Wether to open automatically "
+        "the web browser after creating the issue")
 
     parser.add_argument(
         "--summary", type=str, help="Specify a summary for the issue.")

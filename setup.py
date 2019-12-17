@@ -19,8 +19,9 @@ setup(
     version='0.2',
     description='Jira getting a facelift via the command line',
     long_description_content_type='text/markdown',
-    long_description=
-    "See homepage on https://github.com/chmouel/jira-ohsofancy for longer README",
+    long_description="See homepage on "
+    "https://github.com/chmouel/jira-ohsofancy "
+    "for a longer description",
     author='Chmouel Boudjnah',
     author_email='chmouel@chmouel.com',
     url='https://github.com/chmouel/jira-ohsofancy',
