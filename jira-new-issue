@@ -121,9 +121,23 @@ class JIC(object):
         cnx = self.get_cnx()
         return self._get(cnx.project_versions, project, prompt="💼 Version")
 
-    def issue(self):
-        self.set_config()
+    def _get_completion(self, func, *args):
+        objs = func(*args)
+        return " ".sorted([ob for ob in objs])
 
+    def complete(self):
+        cnx = self.get_cnx()
+        ctype = self.args.complete
+        comp = ""
+        if ctype == "component":
+            comp = " ".join(
+                [ob.name for ob in cnx.project_components(self.args.project)])
+        if ctype == "project":
+            comp = " ".join([ob.key for ob in cnx.projects()])
+
+        print(comp)
+
+    def issue(self):
         cnx = self.get_cnx()
         summary = self.args.summary or self.inputstring(
             "✍🏼  Enter a title for your issue: ")
@@ -199,6 +213,9 @@ def launch(args=None):
         "--editor", type=str, help="Editor to use default to $EDITOR or vim.")
 
     parser.add_argument(
+        "--complete", type=str, help="Used by shell completion.")
+
+    parser.add_argument(
         "--test", default=False, action='store_true', help="Test mode")
 
     parser.add_argument(
@@ -255,7 +272,11 @@ def launch(args=None):
 
     args = parser.parse_args(args or sys.argv[1:])
     m = JIC(args)
-    m.issue()
+    m.set_config()
+    if args.complete:
+        m.complete()
+    else:
+        m.issue()
 
 
 if __name__ == '__main__':
