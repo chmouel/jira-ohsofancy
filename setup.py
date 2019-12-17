@@ -16,7 +16,7 @@ from distutils.core import setup
 
 setup(
     name='jira-ohsofancy',
-    version='0.3',
+    version='0.4',
     description='Jira getting a facelift via the command line',
     long_description_content_type='text/markdown',
     long_description="See homepage on "
