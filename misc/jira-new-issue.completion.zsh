@@ -3,7 +3,8 @@ local ret=1 state
 
 local args=(
     {-h,--help}'[display help message]' \
-    '--test[Test mode or not]' \
+    '--test[Wether to be in Test mode or not]' \
+    '--open[Wether to open automatically the web browser after creating the issue]' \
     '--summary=[Specify a summary for the issue]' \
     '--editor=[Editor to use default to $EDITOR or vim]:editor path:_path_files -/' \
     '--project=[Specify a project]' \

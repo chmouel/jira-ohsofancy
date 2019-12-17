@@ -20,6 +20,7 @@ import readline
 import subprocess
 import sys
 import tempfile
+import webbrowser
 from pprint import pprint as p
 
 import iterfzf
@@ -186,15 +187,27 @@ class JIC(object):
             p(fields)
         else:
             created = cnx.create_issue(fields=fields)
-            print(created.permalink())
+            permalink = created.permalink()
+            print(permalink)
+            if self.args.open:
+                webbrowser.open(permalink)
 
 
 def launch(args=None):
     parser = argparse.ArgumentParser(description='Create a JIRA issue.')
     parser.add_argument(
         "--editor", type=str, help="Editor to use default to $EDITOR or vim.")
+
     parser.add_argument(
-        "-t", "--test", default=False, action='store_true', help="Test mode")
+        "--test", default=False, action='store_true', help="Test mode")
+
+    parser.add_argument(
+        "--open",
+        default=os.environ.get("JIRA_OPEN") and True or False,
+        action='store_true',
+        help=
+        "Wether to open automatically the web browser after creating the issue"
+    )
 
     parser.add_argument(
         "--summary", type=str, help="Specify a summary for the issue.")
