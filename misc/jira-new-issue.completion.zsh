@@ -6,7 +6,7 @@ _jira-new-issue_cache_policy () {
   typeset -a old
 
   # cache is valid for 1d
-  old=( "$1"(m+24) )
+  old=( "$1"(md+1) )
   (( $#old ))
 }
 
@@ -31,18 +31,19 @@ _arguments -S $args && ret=0
 case $state in
     component|project)
         local extra
+        local cacheid=jira-${state}
 
         if [[ ${state} != 'project' ]];then
 
             for (( i = 1; i <= $#words - 1; i++ )); do
                 if [[ $words[$i] == --project=*  ]]; then
                     extra=$words[$i]
+                    cacheid=${cacheid}-${extra#*=}
                 fi
             done
         fi
 
         zstyle ":completion:${curcontext}:" cache-policy _jira-new-issue_cache_policy
-        local cacheid=jira-${state}
         if _cache_invalid "$cacheid" || ! _retrieve_cache "$cacheid";then
             local completions=(${(@f)$(command jira-new-issue ${extra} --complete=${state})})
             _store_cache "$cacheid" completions
