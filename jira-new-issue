@@ -20,15 +20,14 @@ import readline
 import subprocess
 import sys
 import tempfile
+from pprint import pprint as p
 
 import iterfzf
 import jira
 
 readline.parse_and_bind("tab: complete")
 
-RESTRICT_ISSUE_TYPE = [
-    'Bug', 'Feature Request', 'Enhancement', 'Task', 'Epic', 'Story'
-]
+RESTRICT_ISSUE_TYPE = ['Bug', 'Task', 'Epic', 'Story']
 
 
 class JIC(object):
@@ -74,7 +73,7 @@ class JIC(object):
         subprocess.call([editor[0], *editor[1:]])
         blob = open(tmpfile, 'r').readlines()
         os.remove(tmpfile)
-        return blob
+        return blob[0]
 
     def get_cnx(self):
         if self._cnx:
@@ -124,12 +123,12 @@ class JIC(object):
 
         cnx = self.get_cnx()
         summary = self.inputstring("✍🏼  Enter a title for your issue: ")
-        project = self.get_project()
-        version = self.get_versions(project)
+        _project = self.get_project()
+        project = _project.key
+        version = self.get_versions(_project).name
         issuetype = self.get_issuetype()
-        component = self.get_component(project)
-        priority = self.get_priorities()
-
+        component = self.get_component(_project).name
+        priority = self.get_priorities().name
         assign = self.inputstring("🥺 Enter an assignee ('me' for yourself): ")
         print("🛣Launching your editor to edit the description of the issue.")
         description = self.edit()
@@ -137,7 +136,7 @@ class JIC(object):
         if assign == 'me':
             assignee = {'name': self.config['username']}
 
-        dico = {
+        fields = {
             'project': project,
             'summary': summary,
             'description': description,
@@ -157,9 +156,9 @@ class JIC(object):
         }
 
         if self.args.test:
-            print(dico)
+            p(fields)
         else:
-            created = cnx.create_issue(**dico)
+            created = cnx.create_issue(fields=fields)
             print(created.permalink())
 
 
