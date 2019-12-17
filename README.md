@@ -17,6 +17,9 @@ This will the binary `jira-new-issue` into your PATH and the depedencies that go
 python3 -m pip install -r requirements.txt git+https://github.com/chmouel/jira-ohsofancy
 ```
 
+You can install the [zsh completion file](./misc/jira-new-issue.completion.zsh)
+to your path as documented on this [stackoverflow answer](https://unix.stackexchange.com/a/33898) to get a zsh completion.
+
 # Configuration
 
 You need to have a file called `~/.config/jira.ini` with this kind of content :
@@ -30,9 +33,11 @@ password=jane
 
 # Usage
 
-It is pretty much interactive at the moment so it will ask you for whatever you
-fields it needs to.
+Unless you override it with a flag (see `--help` for details) it will ask you
+interactively with `fzf` what's needed to create an issue.
 
+You can set default with environment variable for example `JIRA_PROJECT` will be
+used unless specified with the `--project` flag.
 
 # Demo
 
