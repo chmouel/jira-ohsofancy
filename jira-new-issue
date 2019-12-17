@@ -124,19 +124,41 @@ class JIC(object):
         self.set_config()
 
         cnx = self.get_cnx()
-        summary = self.inputstring("✍🏼  Enter a title for your issue: ")
-        _project = self.get_project()
-        project = _project.key
-        _version = self.get_versions(_project)
-        version = _version and _version.name
-        issuetype = self.get_issuetype()
-        _component = self.get_component(_project)
-        component = _component and _component.name
-        _priority = self.get_priorities()
-        priority = _priority and _priority.name
-        assign = self.inputstring("🥺 Enter an assignee ('me' for yourself): ")
-        print("🛣Launching your editor to edit the description of the issue.")
-        description = self.edit()
+        summary = self.args.summary or self.inputstring(
+            "✍🏼  Enter a title for your issue: ")
+        if self.args.project:
+            project = self.args.project
+        else:
+            _project = self.get_project()
+            project = _project.key
+
+        if self.args.version:
+            version = self.args.version
+        else:
+            _version = self.get_versions(_project)
+            version = _version and _version.name
+
+        issuetype = self.args.issuetype or self.get_issuetype()
+        if self.args.component:
+            component = self.args.component
+        else:
+            _component = self.get_component(_project)
+            component = _component and _component.name
+        if self.args.priority:
+            priority = self.args.priority
+        else:
+            _priority = self.get_priorities()
+            priority = _priority and _priority.name
+
+        assign = self.args.assign or self.inputstring(
+            "🥺 Enter an assignee ('me' for yourself): ")
+
+        if self.args.description_file:
+            description = open(self.args.description_file).read()
+        else:
+            print(
+                "🛣Launching your editor to edit the description of the issue.")
+            description = self.edit()
 
         if assign == 'me':
             assignee = {'name': self.config['username']}
@@ -173,6 +195,50 @@ def launch(args=None):
         "--editor", type=str, help="Editor to use default to $EDITOR or vim.")
     parser.add_argument(
         "-t", "--test", default=False, action='store_true', help="Test mode")
+
+    parser.add_argument(
+        "--summary", type=str, help="Specify a summary for the issue.")
+
+    parser.add_argument(
+        "--project",
+        type=str,
+        default=os.environ.get("JIRA_PROJECT"),
+        help="Specify a project.")
+
+    parser.add_argument(
+        "--version",
+        type=str,
+        default=os.environ.get("JIRA_VERSION"),
+        help="Specify a version.")
+
+    parser.add_argument(
+        "--issuetype",
+        type=str,
+        default=os.environ.get("JIRA_ISSUETYPE"),
+        help="Specify an issue type.")
+
+    parser.add_argument(
+        "--component",
+        default=os.environ.get("JIRA_COMPONENT"),
+        type=str,
+        help="Specify a component.")
+
+    parser.add_argument(
+        "--priority",
+        default=os.environ.get("JIRA_PRIORITY"),
+        type=str,
+        help="Specify a priority.")
+
+    parser.add_argument(
+        "--assign",
+        default=os.environ.get("JIRA_ASSIGN"),
+        type=str,
+        help="Assign to someone (use 'me' for yourself).")
+
+    parser.add_argument(
+        "--description-file",
+        type=str,
+        help="Use this file as the description content of the issue")
 
     args = parser.parse_args(args or sys.argv[1:])
     m = JIC(args)
