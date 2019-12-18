@@ -17,6 +17,7 @@ local args=(
     '--open[Wether to open automatically the web browser after creating the issue]' \
     '--summary=[Specify a summary for the issue]' \
     '--editor=[Editor to use default to $EDITOR or vim]:editor path:_path_files -/' \
+    '--config-file=[Use this file for configuration]:config path:_path_files -/' \
     '--project=[Specify a project]:get project:->project' \
     '--version=[Specify a version]:complete version:->version' \
     '--issuetype=[Specify an issuetype]:Issue type:(Bug Task Epic Story)' \

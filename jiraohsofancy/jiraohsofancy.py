@@ -25,6 +25,16 @@ import jira
 from jiraohsofancy import config
 
 
+class ConfigurationFileError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
+class ChoiceceError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
 class JIC(object):
     def __init__(self, args):
         self._cnx = False
@@ -42,9 +52,9 @@ class JIC(object):
                 'server': server,
             }
             return self.config
-        configfile = os.path.expanduser(config.CONFIGFILE)
+        configfile = os.path.expanduser(self.args.config_file)
         if not os.path.exists(configfile):
-            raise Exception("No configuration file has been set")
+            raise ConfigurationFileError("No configuration file has been set")
         cfg = configparser.ConfigParser()
         cfg.read(configfile)
         self.config = {
@@ -98,7 +108,7 @@ class JIC(object):
         oname = iterfzf.iterfzf(
             reversed(sorted([ob.name for ob in objs])), prompt=prompt)
         if not oname:
-            raise Exception("You need to choose a " + prompt)
+            raise ChoiceceError("You need to choose a " + prompt)
         return [o for o in objs if o.name == oname][0]
 
     def get_project(self):

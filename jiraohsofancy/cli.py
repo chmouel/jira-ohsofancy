@@ -19,6 +19,7 @@ import readline
 import sys
 
 import jiraohsofancy.jiraohsofancy as jio
+import jiraohsofancy.config as config
 
 readline.parse_and_bind("tab: complete")
 
@@ -84,6 +85,12 @@ def newissue(args=None):
         "--description-file",
         type=str,
         help="Use this file as the description content of the issue")
+
+    parser.add_argument(
+        "--config-file",
+        type=str,
+        default=config.CONFIGFILE,
+        help="Use this file for configuration")
 
     args = parser.parse_args(args or sys.argv[1:])
     m = jio.JIC(args)

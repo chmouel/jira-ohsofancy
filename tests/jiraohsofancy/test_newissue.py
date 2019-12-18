@@ -19,8 +19,9 @@ import tempfile
 from unittest import mock
 
 import iterfzf
+import pytest
 
-from jiraohsofancy import config, jiraohsofancy, cli
+from jiraohsofancy import cli, jiraohsofancy
 
 
 class FakeObject(object):
@@ -67,20 +68,25 @@ class FakeJIRA(object):
         return self._versions
 
 
-def test_get_config(monkeypatch):
+def test_get_config_env(monkeypatch):
     [
         monkeypatch.delenv(x, raising=False)
         for x in ["JIRA_USERNAME", "JIRA_PASSWORD", "JIRA_SERVER"]
     ]
 
-    # TODO(chmou): fake the os.environ
-    with monkeypatch.context() as m:
-        m.setenv("JIRA_USERNAME", "foo")
-        m.setenv("JIRA_PASSWORD", "bar")
-        m.setenv("JIRA_SERVER", "https://blah")
-        j = jiraohsofancy.JIC(None)
-        ret = j.set_config()
-        assert (ret['username'] == "foo")
+    monkeypatch.setenv("JIRA_USERNAME", "foo")
+    monkeypatch.setenv("JIRA_PASSWORD", "bar")
+    monkeypatch.setenv("JIRA_SERVER", "https://blah")
+    j = jiraohsofancy.JIC(None)
+    ret = j.set_config()
+    assert (ret['username'] == "foo")
+
+
+def test_get_config_file(monkeypatch):
+    [
+        monkeypatch.delenv(x, raising=False)
+        for x in ["JIRA_USERNAME", "JIRA_PASSWORD", "JIRA_SERVER"]
+    ]
 
     tmpfile = tempfile.NamedTemporaryFile(delete=False)
     tmpfile.write(b"""[jira]\n
@@ -90,7 +96,8 @@ password=moto\n
 """)
     tmpfile.close()
 
-    monkeypatch.setattr(config, "CONFIGFILE", tmpfile.name)
+    argsetup = argparse.Namespace(config_file=tmpfile.name)
+    j = jiraohsofancy.JIC(argsetup)
     j.set_config()
     assert (j.config["username"] == "hello")
     os.remove(tmpfile.name)
@@ -183,3 +190,15 @@ def test_cli_complete(msetc, mcomplete):
     ]
     cli.newissue(argsetup)
     mcomplete.assert_called()
+
+
+@mock.patch('jiraohsofancy.jiraohsofancy.JIC.issue')
+def test_configureation_file_error(missue):
+    argsetup = [
+        '--test', '--project="PRJ1"', '--component="COM"', '--priority="Low"',
+        '--summary="Hello Moto"', '--assign="me"', '--version=v0.1',
+        '--config-file=/tmp/null', '--description-file=tmpfile.name',
+        '--issuetype=Bug'
+    ]
+    with pytest.raises(jiraohsofancy.ConfigurationFileError):
+        cli.newissue(argsetup)
