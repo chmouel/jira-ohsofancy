@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/chmouel/jira-ohsofancy/branch/master/graph/badge.svg)](https://codecov.io/gh/chmouel/jira-ohsofancy)
+
 # JIRA - OHSOFANCY
 
 A simple tool to create a Jira Issue and save you 3 minutes and 37 seconds back to your life each time you are creating an issue on the web interface.
