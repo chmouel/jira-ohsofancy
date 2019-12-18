@@ -16,12 +16,11 @@ import argparse
 import os
 import pprint
 import tempfile
-from unittest.mock import MagicMock
+from unittest import mock
 
 import iterfzf
-import jira
 
-from jiraohsofancy import config, jiraohsofancy
+from jiraohsofancy import config, jiraohsofancy, cli
 
 
 class FakeObject(object):
@@ -103,22 +102,22 @@ def test_get_objects():
     j._cnx = fake
 
     projects = ["INI", "MANI", "MOH"]
-    iterfzf.iterfzf = MagicMock(return_value=projects[0])
+    iterfzf.iterfzf = mock.MagicMock(return_value=projects[0])
     fake.set_projects(projects)
     assert (j.get_project().name == projects[0])
 
     priorities = ["OYLO", "ROUKO", "DEAG"]
-    iterfzf.iterfzf = MagicMock(return_value=priorities[-1])
+    iterfzf.iterfzf = mock.MagicMock(return_value=priorities[-1])
     fake.set_priorities(priorities)
     assert (j.get_priorities().name == priorities[-1])
 
     components = ["ATTA", "BOYA", "KASHA"]
-    iterfzf.iterfzf = MagicMock(return_value=components[-2])
+    iterfzf.iterfzf = mock.MagicMock(return_value=components[-2])
     fake.set_components(components)
     assert (j.get_component("fake").name == components[-2])
 
     versions = ["ATTA", "BOYA", "KASHA"]
-    iterfzf.iterfzf = MagicMock(return_value=versions[-2])
+    iterfzf.iterfzf = mock.MagicMock(return_value=versions[-2])
     fake.set_versions(versions)
     assert (j.get_versions("fake").name == versions[-2])
 
@@ -152,8 +151,8 @@ def test_new_issue(monkeypatch):
 
     monkeypatch.setattr(pprint, "pprint", mypp)
     ji = jiraohsofancy.JIC(argsetup)
-    ji._cnx = MagicMock()
-    ji._cnx.permalink = MagicMock()
+    ji._cnx = mock.MagicMock()
+    ji._cnx.permalink = mock.MagicMock()
     ji.set_config()
     ji.issue()
 
@@ -161,3 +160,24 @@ def test_new_issue(monkeypatch):
     ji.issue()
     ji._cnx.create_issue.assert_called()
     os.remove(tmpfile.name)
+
+
+@mock.patch('jiraohsofancy.jiraohsofancy.JIC.issue')
+def test_cli_main(monkeypatch):
+    argsetup = [
+        '--test', '--project="PRJ1"', '--component="COM"', '--priority="Low"',
+        '--summary="Hello Moto"', '--assign="me"', '--version=v0.1',
+        '--description-file=tmpfile.name', '--issuetype=Bug'
+    ]
+    cli.newissue(argsetup)
+    monkeypatch.assert_called()
+
+
+@mock.patch('jiraohsofancy.jiraohsofancy.JIC.complete')
+def test_cli_complete(monkeypatch):
+    argsetup = [
+        '--complete=version',
+        '--project=PRJ1',
+    ]
+    cli.newissue(argsetup)
+    monkeypatch.assert_called()
