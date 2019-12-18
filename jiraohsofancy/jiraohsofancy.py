@@ -106,7 +106,7 @@ class JIC(object):
         if not objs:
             return
         oname = iterfzf.iterfzf(
-            reversed(sorted([ob.name for ob in objs])), prompt=prompt)
+            sorted([ob.name for ob in objs]), prompt=prompt)
         if not oname:
             raise ChoiceceError("You need to choose a " + prompt)
         return [o for o in objs if o.name == oname][0]
@@ -126,6 +126,14 @@ class JIC(object):
     def get_versions(self, project):
         cnx = self.get_cnx()
         return self._get(cnx.project_versions, project, prompt="💼 Version")
+
+    def get_board(self):
+        cnx = self.get_cnx()
+        return self._get(cnx.boards, prompt="💼 Board")
+
+    def get_sprint(self, board):
+        cnx = self.get_cnx()
+        return self._get(cnx.sprints, board, prompt="💼 Sprint")
 
     def complete(self):
         cnx = self.get_cnx()
@@ -148,8 +156,9 @@ class JIC(object):
 
     def issue(self):
         cnx = self.get_cnx()
+
         summary = self.args.summary or self.inputstring(
-            "✍🏼  Enter a title for your issue: ")
+            "🔏 Enter a title for your issue: ")
 
         if not summary:
             raise ChoiceceError("You need to have a Summary")
@@ -163,15 +172,19 @@ class JIC(object):
         if self.args.version:
             version = self.args.version
         else:
-            _version = self.get_versions(_project)
+            _version = self.get_versions(project)
             version = _version and _version.name
 
         issuetype = self.args.issuetype or self.get_issuetype()
         if self.args.component:
             component = self.args.component
         else:
-            _component = self.get_component(_project)
+            _component = self.get_component(project)
             component = _component and _component.name
+
+        # if self.args.agile:
+        #     board = self.args.board or self.get_board().id
+        #     sprint = self.args.sprint or self.get_sprint(board).id
 
         if self.args.priority:
             priority = self.args.priority
@@ -211,7 +224,7 @@ class JIC(object):
             }],
             'priority': {
                 'name': priority
-            }
+            },
         }
 
         if self.args.test:
@@ -219,6 +232,10 @@ class JIC(object):
         else:
             created = cnx.create_issue(fields=fields)
             permalink = created.permalink()
+
+            # if self.args.agile:
+            #     cnx.add_issues_to_epic(sprint, created.id)
+
             print(permalink)
             if self.args.open:
                 webbrowser.open(permalink)

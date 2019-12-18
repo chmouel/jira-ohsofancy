@@ -92,6 +92,24 @@ def newissue(args=None):
         default=config.CONFIGFILE,
         help="Use this file for configuration")
 
+    # parser.add_argument(
+    #     "--agile",
+    #     default=os.environ.get("JIRA_AGILE") and True or False,
+    #     action='store_true',
+    #     help="Wether we ask for agile questions like boards and sprint.")
+
+    # parser.add_argument(
+    #     "--board",
+    #     default=os.environ.get("JIRA_BOARD_ID"),
+    #     type=int,
+    #     help="Specify a board id (needs --agile to work)")
+
+    # parser.add_argument(
+    #     "--sprint",
+    #     default=os.environ.get("JIRA_SPRINT_ID"),
+    #     type=int,
+    #     help="Specify a sprints (needs --agile to work)")
+
     args = parser.parse_args(args or sys.argv[1:])
     m = jio.JIC(args)
     m.set_config()
