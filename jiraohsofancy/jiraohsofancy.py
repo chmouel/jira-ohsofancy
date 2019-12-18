@@ -150,6 +150,10 @@ class JIC(object):
         cnx = self.get_cnx()
         summary = self.args.summary or self.inputstring(
             "✍🏼  Enter a title for your issue: ")
+
+        if not summary:
+            raise ChoiceceError("You need to have a Summary")
+
         if self.args.project:
             project = self.args.project
         else:
@@ -168,6 +172,7 @@ class JIC(object):
         else:
             _component = self.get_component(_project)
             component = _component and _component.name
+
         if self.args.priority:
             priority = self.args.priority
         else:
@@ -176,6 +181,9 @@ class JIC(object):
 
         assign = self.args.assign or self.inputstring(
             "🥺 Enter an assignee ('me' for yourself): ")
+
+        if not assign:
+            raise ChoiceceError("You need to choose an assignee")
 
         if self.args.description_file:
             description = open(self.args.description_file).read()
