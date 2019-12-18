@@ -127,18 +127,20 @@ class TestJIC():
         assert (ret == "Hello Moto")
 
     def test_complete(self, capsys):
-
-        fake = fixtures.FakeJIRA()
-        for o in [("project", fake.set_projects, ["PROJ1", "PRJ2", "PRJ3"]),
-                  ("component", fake.set_components,
-                   ["COMP1", "COMP2", "COMP3"]),
-                  (["version", fake.set_versions, ["v1", "v2", "v3"]])]:
+        ff = fixtures.FakeJIRA()
+        # Python is weird, wtf i need that for
+        ff._projects = []
+        ff._versions = []
+        ff._components = []
+        for o in [("project", ff.set_projects, ["PROJ1", "PRJ2", "PRJ3"]),
+                  ("component", ff.set_components, ["COMP1", "COMP2",
+                                                    "COMP3"]),
+                  (["version", ff.set_versions, ["v1", "v2", "v3"]])]:
             argsetup = argparse.Namespace(complete=o[0], project="BLAH")
             o[1](o[2])
 
             ji = jiraohsofancy.JIC(argsetup)
-            ji._cnx = fake
+            ji._cnx = ff
 
-            ji.complete()
-
-            assert (capsys.readouterr().out == " ".join(o[2]) + "\n")
+            ret = ji.complete()
+            assert (ret == " ".join(o[2]))

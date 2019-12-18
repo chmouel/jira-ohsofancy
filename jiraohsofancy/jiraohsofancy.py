@@ -153,6 +153,7 @@ class JIC(object):
             comp = " ".join([ob.key for ob in cnx.projects()])
 
         print(comp)
+        return comp
 
     def issue(self):
         cnx = self.get_cnx()

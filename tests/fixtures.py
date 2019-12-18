@@ -30,18 +30,22 @@ class FakeJIRA(object):
     _versions = []
 
     def set_projects(self, projects):
+        self._projects = []
         for p in projects:
             self._projects.append(FakeObject(p))
 
     def set_priorities(self, priorities):
+        self._priorities = []
         for p in priorities:
             self._priorities.append(FakeObject(p))
 
     def set_components(self, components):
+        self._components = []
         for p in components:
             self._components.append(FakeObject(p))
 
     def set_versions(self, versions):
+        self._priorities = []
         for p in versions:
             self._versions.append(FakeObject(p))
 
