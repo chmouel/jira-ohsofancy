@@ -169,6 +169,19 @@ def test_new_issue(monkeypatch):
     os.remove(tmpfile.name)
 
 
+@mock.patch('tempfile.mkstemp')
+@mock.patch('subprocess.call')
+def test_edit(sc, ts):
+    tmpfile = tempfile.NamedTemporaryFile(delete=False)
+    tmpfile.write(b"Hello Moto")
+    tmpfile.close()
+    ts.return_value = [0, tmpfile.name]
+    argsetup = argparse.Namespace(editor=None)
+    ji = jiraohsofancy.JIC(argsetup)
+    ret = ji.edit()
+    assert (ret == "Hello Moto")
+
+
 @mock.patch('jiraohsofancy.jiraohsofancy.JIC.set_config')
 @mock.patch('jiraohsofancy.jiraohsofancy.JIC.issue')
 def test_cli_issue(msetc, missue):
