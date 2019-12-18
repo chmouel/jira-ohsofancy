@@ -12,13 +12,16 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+import argparse
 import os
+import pprint
 import tempfile
 from unittest.mock import MagicMock
 
 import iterfzf
-from jiraohsofancy import jiraohsofancy
-from jiraohsofancy import config
+import jira
+
+from jiraohsofancy import config, jiraohsofancy
 
 
 class FakeObject(object):
@@ -118,3 +121,43 @@ def test_get_objects():
     iterfzf.iterfzf = MagicMock(return_value=versions[-2])
     fake.set_versions(versions)
     assert (j.get_versions("fake").name == versions[-2])
+
+
+def test_new_issue(monkeypatch):
+    tmpfile = tempfile.NamedTemporaryFile(delete=False)
+    tmpfile.write(b"""Alatouki la marakena""")
+    tmpfile.close()
+
+    argsetup = argparse.Namespace(
+        test=True,
+        open=False,
+        project="SRVKP",
+        component="CLI",
+        priority="Low",
+        summary="Hello Moto",
+        assign="me",
+        version='v0.1',
+        description_file=tmpfile.name,
+        issuetype="Bug")
+
+    monkeypatch.setenv("JIRA_USERNAME", "foo")
+    monkeypatch.setenv("JIRA_PASSWORD", "bar")
+    monkeypatch.setenv("JIRA_SERVER", "https://blah")
+
+    def mypp(_output):
+        assert (_output["description"] == "Alatouki la marakena")
+        assert (_output["versions"][0]['name'] == argsetup.version)
+        assert (_output["summary"] == argsetup.summary)
+        assert (_output["components"][0]['name'] == argsetup.component)
+
+    monkeypatch.setattr(pprint, "pprint", mypp)
+    ji = jiraohsofancy.JIC(argsetup)
+    ji._cnx = MagicMock()
+    ji._cnx.permalink = MagicMock()
+    ji.set_config()
+    ji.issue()
+
+    ji.args.test = False
+    ji.issue()
+    ji._cnx.create_issue.assert_called()
+    os.remove(tmpfile.name)
