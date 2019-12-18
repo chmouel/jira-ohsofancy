@@ -21,7 +21,7 @@ from unittest import mock
 import iterfzf
 import pytest
 
-from jiraohsofancy import cli, jiraohsofancy
+from jiraohsofancy import jiraohsofancy
 from . import fixtures
 
 
@@ -126,35 +126,19 @@ class TestJIC():
         ret = ji.edit()
         assert (ret == "Hello Moto")
 
-    @mock.patch('jiraohsofancy.jiraohsofancy.JIC.set_config')
-    @mock.patch('jiraohsofancy.jiraohsofancy.JIC.issue')
-    def test_cli_issue(self, msetc, missue):
-        argsetup = [
-            '--test', '--project="PRJ1"', '--component="COM"',
-            '--priority="Low"', '--summary="Hello Moto"', '--assign="me"',
-            '--version=v0.1', '--description-file=tmpfile.name',
-            '--issuetype=Bug'
-        ]
-        cli.newissue(argsetup)
-        missue.assert_called()
+    def test_complete(self, capsys):
 
-    @mock.patch('jiraohsofancy.jiraohsofancy.JIC.set_config')
-    @mock.patch('jiraohsofancy.jiraohsofancy.JIC.complete')
-    def test_cli_complete(self, msetc, mcomplete):
-        argsetup = [
-            '--complete=version',
-            '--project=PRJ1',
-        ]
-        cli.newissue(argsetup)
-        mcomplete.assert_called()
+        fake = fixtures.FakeJIRA()
+        for o in [("project", fake.set_projects, ["PROJ1", "PRJ2", "PRJ3"]),
+                  ("component", fake.set_components,
+                   ["COMP1", "COMP2", "COMP3"]),
+                  (["version", fake.set_versions, ["v1", "v2", "v3"]])]:
+            argsetup = argparse.Namespace(complete=o[0], project="BLAH")
+            o[1](o[2])
 
-    @mock.patch('jiraohsofancy.jiraohsofancy.JIC.issue')
-    def test_configureation_file_error(self, missue):
-        argsetup = [
-            '--test', '--project="PRJ1"', '--component="COM"',
-            '--priority="Low"', '--summary="Hello Moto"', '--assign="me"',
-            '--version=v0.1', '--config-file=/tmp/null',
-            '--description-file=tmpfile.name', '--issuetype=Bug'
-        ]
-        with pytest.raises(jiraohsofancy.ConfigurationFileError):
-            cli.newissue(argsetup)
+            ji = jiraohsofancy.JIC(argsetup)
+            ji._cnx = fake
+
+            ji.complete()
+
+            assert (capsys.readouterr().out == " ".join(o[2]) + "\n")

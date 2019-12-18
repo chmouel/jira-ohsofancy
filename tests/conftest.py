@@ -13,12 +13,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
+
 import pytest
 
 
 @pytest.fixture
 def reset_env(monkeypatch):
-    [
-        monkeypatch.delenv(x, raising=False)
-        for x in ["JIRA_USERNAME", "JIRA_PASSWORD", "JIRA_SERVER"]
-    ]
+    for env in os.environ:
+        if env.startswith("JIRA_"):
+            monkeypatch.delenv(env, raising=False)
