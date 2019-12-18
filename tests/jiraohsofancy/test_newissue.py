@@ -162,22 +162,24 @@ def test_new_issue(monkeypatch):
     os.remove(tmpfile.name)
 
 
+@mock.patch('jiraohsofancy.jiraohsofancy.JIC.set_config')
 @mock.patch('jiraohsofancy.jiraohsofancy.JIC.issue')
-def test_cli_main(monkeypatch):
+def test_cli_issue(msetc, missue):
     argsetup = [
         '--test', '--project="PRJ1"', '--component="COM"', '--priority="Low"',
         '--summary="Hello Moto"', '--assign="me"', '--version=v0.1',
         '--description-file=tmpfile.name', '--issuetype=Bug'
     ]
     cli.newissue(argsetup)
-    monkeypatch.assert_called()
+    missue.assert_called()
 
 
+@mock.patch('jiraohsofancy.jiraohsofancy.JIC.set_config')
 @mock.patch('jiraohsofancy.jiraohsofancy.JIC.complete')
-def test_cli_complete(monkeypatch):
+def test_cli_complete(msetc, mcomplete):
     argsetup = [
         '--complete=version',
         '--project=PRJ1',
     ]
     cli.newissue(argsetup)
-    monkeypatch.assert_called()
+    mcomplete.assert_called()
