@@ -20,7 +20,7 @@ class FakeObject(object):
 
     def __init__(self, name, key=None):
         self.name = name
-        self.key = key and key
+        self.key = key and key or name
 
 
 class FakeJIRA(object):
