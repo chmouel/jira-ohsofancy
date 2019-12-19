@@ -2,9 +2,10 @@
 
 # JIRA - OHSOFANCY
 
-A simple tool to create a Jira Issue and save you 3 minutes and 37 seconds back to your life each time you are creating an issue on the web interface.
+A collection of tools for JIRA. It aim to get your JIRA tasks done as quickly as possible.
 
-This will use fzf for quick filtering of fields and spin up your `$EDITOR` to type your issue description.
+ * **jira-new-issue** -- A simple tool to create a Jira Issue and save you 3 minutes and 37 seconds back to your life each time you are creating an issue on the web interface.
+This will use [fzf](https://github.com/junegunn/fzf) for quick filtering and spin up your `$EDITOR` so you can confortably type your issue description.
 
 # REQUIREMENT
 
@@ -13,18 +14,23 @@ This will use fzf for quick filtering of fields and spin up your `$EDITOR` to ty
 
 # INSTALL
 
-This will the binary `jira-new-issue` into your PATH and the depedencies that goes with it.
+You can install the latest release version directly from the https://pypi.io repository :
 
 ```shell
 python3 -mpip install jira-ohsofancy
 ```
 
-You can install the [zsh completion file](./misc/jira-new-issue.completion.zsh)
-to your path as documented on this [stackoverflow
-answer](https://unix.stackexchange.com/a/33898) to get the zsh completion. The
-completion is pretty fancy too, it would complete on for example the components
-of the specified project. (make sure you specify `--project` flag or
-`JIRA_PROJECT` env so it knows where to go)
+Or if you want to use the latest version from GitHUB you can do :
+
+```shell
+python3 -mpip install git+https://github.com/chmouel/jira-ohsofancy
+```
+
+You can as wel install the [zsh completion file](./misc/jira-new-issue.completion.zsh)
+to your `fpath` as documented on this [stackoverflow
+answer](https://unix.stackexchange.com/a/33898) to get the zsh completion. 
+The completion tries to be pretty fancy too, it will complete `components`, `version`
+of the specified project and do the right thing when you specify another project than the default one.
 
 # Configuration
 
@@ -37,16 +43,18 @@ username=joe
 password=jane
 ```
 
-Most command can be overriden by env flags for example for example `JIRA_PROJECT` will be
+Most command can be overriden by environmenet flags for example for example `JIRA_PROJECT` will be
 used unless specified with the `--project` flag.
+
+See `--help` for a complete list of environment variables that can be specified.
 
 
 # Usage
 
 Unless you override it with a flag (see `--help` for details) it will ask you
-interactively with `fzf` the needed thing to create an issue.
+interactively with `fzf` what's needed to create an issue.
 
-If you specify the `--description-file` it will use the file content for the description.
+If you specify the `--description-file` it will use the file content as the description.
 
 # Demo
 
@@ -54,7 +62,7 @@ If you specify the `--description-file` it will use the file content for the des
 
 # Authors
 
-Chmouel Boudjnah -- chmouel@chmouel.com
+[Chmouel Boudjnah](https://github.com/chmouel)
 
 # License
 
