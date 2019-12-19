@@ -127,14 +127,6 @@ class JIC(object):
         cnx = self.get_cnx()
         return self._get(cnx.project_versions, project, prompt="💼 Version")
 
-    def get_board(self):
-        cnx = self.get_cnx()
-        return self._get(cnx.boards, prompt="💼 Board")
-
-    def get_sprint(self, board):
-        cnx = self.get_cnx()
-        return self._get(cnx.sprints, board, prompt="💼 Sprint")
-
     def complete(self):
         cnx = self.get_cnx()
         ctype = self.args.complete
@@ -182,10 +174,6 @@ class JIC(object):
         else:
             _component = self.get_component(project)
             component = _component and _component.name
-
-        # if self.args.agile:
-        #     board = self.args.board or self.get_board().id
-        #     sprint = self.args.sprint or self.get_sprint(board).id
 
         if self.args.priority:
             priority = self.args.priority
