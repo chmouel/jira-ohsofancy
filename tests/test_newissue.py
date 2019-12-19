@@ -75,10 +75,11 @@ class TestJIC():
         fake.set_versions(versions)
         assert (j.get_versions("fake").name == versions[-2])
 
-    def test_new_issue(self, monkeypatch, reset_env):
-        tmpfile = tempfile.NamedTemporaryFile(delete=False)
-        tmpfile.write(b"""Alatouki la marakena""")
-        tmpfile.close()
+    def test_new_issue(self, monkeypatch, reset_env, tmp_path):
+        tmpfile = tmp_path / "config.ini"
+        fd = open(tmpfile, 'wb')
+        fd.write(b"""Alatouki la marakena""")
+        fd.close()
 
         argsetup = argparse.Namespace(
             test=True,
@@ -89,7 +90,7 @@ class TestJIC():
             summary="Hello Moto",
             assign="me",
             version='v0.1',
-            description_file=tmpfile.name,
+            description_file=tmpfile,
             issuetype="Bug")
 
         monkeypatch.setenv("JIRA_USERNAME", "foo")
@@ -112,7 +113,6 @@ class TestJIC():
         ji.args.test = False
         ji.issue()
         ji._cnx.create_issue.assert_called()
-        os.remove(tmpfile.name)
 
     @mock.patch('tempfile.mkstemp')
     @mock.patch('subprocess.call')
