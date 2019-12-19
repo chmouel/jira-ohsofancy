@@ -1,4 +1,9 @@
-[![codecov](https://codecov.io/gh/chmouel/jira-ohsofancy/branch/master/graph/badge.svg)](https://codecov.io/gh/chmouel/jira-ohsofancy)
+.. |codecov| image:: https://img.shields.io/codecov/c/github/chmouel/jira-ohsofancy/master.svg?style=flat-square
+    :target: https://codecov.io/gh/chmouel/jira-ohsofancy
+.. |license| image:: https://img.shields.io/pypi/l/jira-ohsofancy.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/jira-ohsofancy
+.. |pypi| image:: https://img.shields.io/pypi/v/jira-ohsofancy.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/jira-ohsofancy
 
 # JIRA - OHSOFANCY
 
