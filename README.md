@@ -1,9 +1,4 @@
-.. |codecov| image:: https://img.shields.io/codecov/c/github/chmouel/jira-ohsofancy/master.svg?style=flat-square
-    :target: https://codecov.io/gh/chmouel/jira-ohsofancy
-.. |license| image:: https://img.shields.io/pypi/l/jira-ohsofancy.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/jira-ohsofancy
-.. |pypi| image:: https://img.shields.io/pypi/v/jira-ohsofancy.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/jira-ohsofancy
+[![Codecov](https://img.shields.io/codecov/c/github/chmouel/jira-ohsofancy/master.svg?style=flat-square)](https://codecov.io/gh/chmouel/jira-ohsofancy)  [![License](https://img.shields.io/pypi/l/jira-ohsofancy.svg?style=flat-square)](https://pypi.python.org/pypi/jira-ohsofancy) [![PYPI](https://img.shields.io/pypi/v/jira-ohsofancy.svg?style=flat-square)](https://pypi.python.org/pypi/jira-ohsofancy) 
 
 # JIRA - OHSOFANCY
 
