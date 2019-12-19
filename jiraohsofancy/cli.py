@@ -40,7 +40,7 @@ def newissue(args=None):
         default=os.environ.get("JIRA_OPEN") and True or False,
         action='store_true',
         help="Wether to open automatically "
-        "the web browser after creating the issue")
+        "the web browser after creating the issue. env:JIRA_OPEN")
 
     parser.add_argument(
         "--summary", type=str, help="Specify a summary for the issue.")
@@ -49,37 +49,37 @@ def newissue(args=None):
         "--project",
         type=str,
         default=os.environ.get("JIRA_PROJECT"),
-        help="Specify a project.")
+        help="Specify a project. env:JIRA_PROJECT")
 
     parser.add_argument(
         "--version",
         type=str,
         default=os.environ.get("JIRA_VERSION"),
-        help="Specify a version.")
+        help="Specify a version. env:JIRA_VERSION")
 
     parser.add_argument(
         "--issuetype",
         type=str,
         default=os.environ.get("JIRA_ISSUETYPE"),
-        help="Specify an issue type.")
+        help="Specify an issue type. env:JIRA_ISSUETYPE")
 
     parser.add_argument(
         "--component",
         default=os.environ.get("JIRA_COMPONENT"),
         type=str,
-        help="Specify a component.")
+        help="Specify a component. env:JIRA_COMPONENT")
 
     parser.add_argument(
         "--priority",
         default=os.environ.get("JIRA_PRIORITY"),
         type=str,
-        help="Specify a priority.")
+        help="Specify a priority. env:JIRA_PRIORITY")
 
     parser.add_argument(
         "--assign",
         default=os.environ.get("JIRA_ASSIGN"),
         type=str,
-        help="Assign to someone (use 'me' for yourself).")
+        help="Assign to someone (use 'me' for yourself). env:JIRA_ASSIGN")
 
     parser.add_argument(
         "--description-file",
@@ -90,7 +90,7 @@ def newissue(args=None):
         "--config-file",
         type=str,
         default=config.CONFIGFILE,
-        help="Use this file for configuration")
+        help="Use this file for configuration.")
 
     args = parser.parse_args(args or sys.argv[1:])
     m = jio.JIC(args)
