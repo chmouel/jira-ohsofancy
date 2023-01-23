@@ -59,7 +59,10 @@ If you specify the `--description-file` it will use the file content as the desc
 
 # Demo
 
-[![asciicast](https://asciinema.org/a/w7MmcseAkk4vBg3JlSMIbC1dW.svg)](https://asciinema.org/a/w7MmcseAkk4vBg3JlSMIbC1dW)
+
+https://user-images.githubusercontent.com/98980/214076784-c5e5c2de-1544-4c63-9fd9-0576176c0fcc.mov
+
+
 
 # Authors
 
