@@ -1,3 +1,4 @@
+# pylint: disable=import-error
 # -*- coding: utf-8 -*-
 # Author: Chmouel Boudjnah <chmouel@chmouel.com>
 #
@@ -47,9 +48,9 @@ class JIC(object):
         server = os.environ.get("JIRA_SERVER")
         if username and password and server:
             self.config = {
-                'username': username,
-                'password': password,
-                'server': server,
+                "username": username,
+                "password": password,
+                "server": server,
             }
             return self.config
         configfile = os.path.expanduser(self.args.config_file)
@@ -58,10 +59,15 @@ class JIC(object):
         cfg = configparser.ConfigParser()
         cfg.read(configfile)
         self.config = {
-            "server": cfg.get('jira', 'server'),
-            "username": cfg.get('jira', 'username'),
-            "password": cfg.get('jira', 'password')
+            "server": cfg.get("jira", "server"),
+            "username": cfg.get("jira", "username", fallback=None),
+            "password": cfg.get("jira", "password", fallback=None),
+            "token": cfg.get("jira", "token", fallback=None),
         }
+        if not self.config["password"] and not self.config["token"]:
+            raise ConfigurationFileError(
+                "No password or token has been set in the configuration file"
+            )
 
     def inputstring(self, prompt):
         return input(prompt)
@@ -70,43 +76,48 @@ class JIC(object):
         tmpfile = tempfile.mkstemp(".md", "jira-issue-create-")[1]
         if self.args.editor:
             editor = self.args.editor
-        elif 'EDITOR' in os.environ:
-            editor = os.environ['EDITOR']
+        elif "EDITOR" in os.environ:
+            editor = os.environ["EDITOR"]
         else:
-            editor = 'vi'
+            editor = "vi"
         editor = editor.split(" ")
         editor.append(tmpfile)
         subprocess.call([editor[0], *editor[1:]])
-        blob = open(tmpfile, 'r').readlines()
+        blob = open(tmpfile, "r", encoding="utf-8").readlines()
         os.remove(tmpfile)
+        if not blob:
+            raise ChoiceceError("You need to enter a description")
         return blob[0]
 
     def get_cnx(self):
         if self._cnx:
             return self._cnx
-        self._cnx = jira.JIRA(
-            server=self.config['server'],
-            basic_auth=(self.config['username'], self.config['password']))
+        kwords = {}
+        kwords["server"] = self.config["server"]
+        if "token" in self.config:
+            kwords["token_auth"] = self.config["token"]
+        elif "username" in self.config and "password" in self.config:
+            kwords["basic_auth"] = (self.config["username"], self.config["password"])
+
+        self._cnx = jira.JIRA(**kwords)
         return self._cnx
 
     # Not using the whole list if issue_type and only a static list cause a lot
     # of irrelevant stuff in there,
     def get_issuetype(self):
-        return iterfzf.iterfzf(
-            config.RESTRICT_ISSUE_TYPE, prompt="🐞 Issue Type> ")
+        return iterfzf.iterfzf(config.RESTRICT_ISSUE_TYPE, prompt="🐞 Issue Type> ")
 
     def _get(
-            self,
-            func,
-            *args,
-            prompt="",
+        self,
+        func,
+        *args,
+        prompt="",
     ):
         prompt += "> "
         objs = func(*args)
         if not objs:
             return
-        oname = iterfzf.iterfzf(
-            sorted([ob.name for ob in objs]), prompt=prompt)
+        oname = iterfzf.iterfzf(sorted([ob.name for ob in objs]), prompt=prompt)
         if not oname:
             raise ChoiceceError("You need to choose a " + prompt)
         return [o for o in objs if o.name == oname][0]
@@ -118,6 +129,14 @@ class JIC(object):
     def get_priorities(self):
         cnx = self.get_cnx()
         return self._get(cnx.priorities, prompt="💁‍♂️ Priority")
+
+    # def get_project_priorities(self, project):
+    #     cnx = self.get_cnx()
+    #     r_json = cnx._get_json(f"project/{project}/priority")
+    #     return [
+    #         jira.Priority(cnx._options, cnx._session, raw_priority_json)
+    #         for raw_priority_json in r_json
+    #     ]
 
     def get_component(self, project):
         cnx = self.get_cnx()
@@ -132,15 +151,13 @@ class JIC(object):
         ctype = self.args.complete
         comp = ""
         if ctype == "component":
-            comp = " ".join([
-                ob.name.strip()
-                for ob in cnx.project_components(self.args.project)
-            ])
+            comp = " ".join(
+                [ob.name.strip() for ob in cnx.project_components(self.args.project)]
+            )
         elif ctype == "version":
-            comp = " ".join([
-                ob.name.strip()
-                for ob in cnx.project_versions(self.args.project)
-            ])
+            comp = " ".join(
+                [ob.name.strip() for ob in cnx.project_versions(self.args.project)]
+            )
         elif ctype == "project":
             comp = " ".join([ob.key for ob in cnx.projects()])
 
@@ -151,7 +168,8 @@ class JIC(object):
         cnx = self.get_cnx()
 
         summary = self.args.summary or self.inputstring(
-            "🔏 Enter a title for your issue: ")
+            "🔏 Enter a title for your issue: "
+        )
 
         if not summary:
             raise ChoiceceError("You need to have a Summary")
@@ -182,38 +200,33 @@ class JIC(object):
             priority = _priority and _priority.name
 
         assign = self.args.assign or self.inputstring(
-            "🥺 Enter an assignee ('me' for yourself): ")
+            "🥺 Enter an assignee ('me' for yourself): "
+        )
 
         if not assign:
             raise ChoiceceError("You need to choose an assignee")
 
         if self.args.description_file:
-            description = open(self.args.description_file).read()
+            description = open(self.args.description_file, encoding="utf-8").read()
         else:
-            print(
-                "🛣Launching your editor to edit the description of the issue.")
+            print("🛣Launching your editor to edit the description of the issue.")
             description = self.edit()
 
-        if assign == 'me':
-            assignee = {'name': self.config['username']}
+        assignK = {}
+        if assign:
+            if assign == "me":
+                assign = self.get_cnx().current_user()
+            assignK = {"name": assign}
 
         fields = {
-            'project': project,
-            'summary': summary,
-            'description': description,
-            'issuetype': {
-                'name': issuetype
-            },
-            'assignee': assignee,
-            'components': [{
-                'name': component
-            }],
-            'versions': [{
-                'name': version
-            }],
-            'priority': {
-                'name': priority
-            },
+            "project": project,
+            "summary": summary,
+            "description": description,
+            "issuetype": {"name": issuetype},
+            "assignee": assignK,
+            "components": [{"name": component}],
+            "versions": [{"name": version}],
+            "priority": {"name": priority},
         }
 
         if self.args.test:

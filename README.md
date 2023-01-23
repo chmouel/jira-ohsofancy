@@ -38,9 +38,10 @@ You need to have a file called `~/.config/jira.ini` with this kind of content :
 
 ```ini
 [jira]
-server=https://localhost.examle.com
-username=joe
-password=jane
+server=https://issue.redhat.com/
+username=joe # optional if you use token
+password=jane # optional if you use token
+token=token # optional if you use username/token
 ```
 
 Most command can be overriden by environmenet flags for example for example `JIRA_PROJECT` will be
