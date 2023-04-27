@@ -20,10 +20,20 @@ import subprocess
 import tempfile
 import webbrowser
 
-import iterfzf
+from simple_term_menu import TerminalMenu
 import jira
 
 from jiraohsofancy import config
+
+
+def show_menu(options: list, prompt: None | str = None) -> str:
+    if prompt:
+        print(prompt)
+    terminal_menu = TerminalMenu(options)
+    menu_entry_index = terminal_menu.show()
+    if not menu_entry_index:
+        return ""
+    return options[menu_entry_index]
 
 
 class ConfigurationFileError(Exception):
@@ -105,7 +115,7 @@ class JIC(object):
     # Not using the whole list if issue_type and only a static list cause a lot
     # of irrelevant stuff in there,
     def get_issuetype(self):
-        return iterfzf.iterfzf(config.RESTRICT_ISSUE_TYPE, prompt="🐞 Issue Type> ")
+        return show_menu(config.RESTRICT_ISSUE_TYPE, prompt="🐞 Issue Type> ")
 
     def _get(
         self,
@@ -117,7 +127,7 @@ class JIC(object):
         objs = func(*args)
         if not objs:
             return
-        oname = iterfzf.iterfzf(sorted([ob.name for ob in objs]), prompt=prompt)
+        oname = show_menu(sorted([ob.name for ob in objs]), prompt=prompt)
         if not oname:
             raise ChoiceceError("You need to choose a " + prompt)
         return [o for o in objs if o.name == oname][0]

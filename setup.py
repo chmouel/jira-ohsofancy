@@ -15,24 +15,23 @@
 from distutils.core import setup
 
 setup(
-    name='jira-ohsofancy',
-    version='0.4',
-    description='Jira getting a facelift via the command line',
-    long_description_content_type='text/markdown',
+    name="jira-ohsofancy",
+    version="0.4",
+    description="Jira getting a facelift via the command line",
+    long_description_content_type="text/markdown",
     long_description="See homepage on "
     "https://github.com/chmouel/jira-ohsofancy "
     "for a longer description",
-    author='Chmouel Boudjnah',
-    author_email='chmouel@chmouel.com',
-    url='https://github.com/chmouel/jira-ohsofancy',
-    install_requires=['iterfzf>=0.4.0', 'jira>=2.0.0'],
+    author="Chmouel Boudjnah",
+    author_email="chmouel@chmouel.com",
+    url="https://github.com/chmouel/jira-ohsofancy",
+    install_requires=["simple-term-menu", "jira>=2.0.0"],
     packages=["jiraohsofancy"],
     license="Apache 2.0",
-    classifiers=[
-        'License :: OSI Approved :: Python Software Foundation License'
-    ],
+    classifiers=["License :: OSI Approved :: Python Software Foundation License"],
     entry_points={
-        'console_scripts': [
-            'jira-new-issue = jiraohsofancy.cli:newissue',
+        "console_scripts": [
+            "jira-new-issue = jiraohsofancy.cli:newissue",
         ],
-    })
+    },
+)
